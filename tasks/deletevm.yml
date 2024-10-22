@@ -1,0 +1,26 @@
+---
+- include_tasks: getting_facts.yml
+
+- name: shutdown the VM
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username  }}"
+    password: "{{ vmware_vcenter_password  }}"
+    name: "{{ item.instance.hw_name }}"
+    uuid: "{{ item.instance.hw_product_uuid  }}"
+    state: poweredoff
+    validate_certs: false
+  with_flattened: "{{ vm_facts.results }}"
+  when: item.item.state == "absent"
+
+- name: deleting the VM
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username }}"
+    password: "{{ vmware_vcenter_password }}"
+    name: "{{ item.instance.hw_name  }}"
+    uuid: "{{ item.instance.hw_product_uuid  }}"
+    state: absent
+    validate_certs: false
+  with_flattened: "{{ vm_facts.results }}"
+  when: item.item.state == "absent"

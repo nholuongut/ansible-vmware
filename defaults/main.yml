@@ -1,0 +1,71 @@
+---
+# ------------------------------------------------------------------------------
+# Set the settings of vCenter Server according environment
+# ------------------------------------------------------------------------------
+vmware_vcenter_host: ""
+vmware_vcenter_datacenter: ""
+vmware_vcenter_cluster: ""
+
+# ------------------------------------------------------------------------------
+# Important! Set the hosts configurations
+# ------------------------------------------------------------------------------
+# Can you use state:
+#   - present: to create a VM
+#   - absent: to remove a VM
+#
+# To change the VM state, sets one of the values bellow:
+#   - poweredon
+#   - poweredoff
+#   - restarted
+#   - suspended
+#   - shutdownguest
+#   - rebootguest
+#
+# Guest SO Options:
+#   - rhel: rhel7_64Guest
+#   - windows2012: windows7Server64Guest
+#
+# Templates:
+#   - rhel: Template_rhel-7.3_x64-PACKER-base-{VERSION}
+#   - windows:
+# ------------------------------------------------------------------------------
+hotadd_cpu: true
+hotremove_cpu: true
+hotadd_memory: true
+mem_reservation: 0
+num_cpu_cores_per_socket: 0
+
+vmware_hosts:
+  - name: VM_NAME
+    note: Annotation Example
+    vcpus: 0
+    memory_size: 0
+    so_guest: ""
+    disks_list:
+      - size_gb: 0
+        datastore: ""
+    networks:
+      - name: ""
+        ip: ""
+        netmask: ""
+        gateway: ""
+        device_type: ""
+    template_base: ""
+    vm_folder: ""
+    state: present
+    mgmt_state: ""
+
+# ------------------------------------------------------------------------------
+# Set this variable to rename a VM
+# ------------------------------------------------------------------------------
+vmware_new_vm_name:
+  - list_of_name
+
+# ------------------------------------------------------------------------------
+# Set this configurations to Windows VM
+# ------------------------------------------------------------------------------
+vmware_costumizations_windows_autologon:
+
+# ------------------------------------------------------------------------------
+# For custom variables
+# ------------------------------------------------------------------------------

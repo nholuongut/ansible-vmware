@@ -1,0 +1,15 @@
+---
+- include_tasks: getting_facts.yml
+
+- name: rename a Virtual Machine
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username }}"
+    password: "{{ vmware_vcenter_password }}"
+    name: "{{ item.1 }}"
+    uuid: "{{ item.0.instance.hw_product_uuid  }}"
+    state: present
+    validate_certs: false
+  with_together:
+    - "{{ vm_facts.results }}"
+    - "{{ vmware_new_vm_name }}"

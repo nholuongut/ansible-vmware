@@ -1,0 +1,68 @@
+---
+- name: creating a VM Linux at vSphere vCenter
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username }}"
+    password: "{{ vmware_vcenter_password }}"
+    datacenter: "{{ vmware_vcenter_datacenter }}"
+    cluster: "{{ vmware_vcenter_cluster }}"
+    annotation: "{{ item.note }}"
+    name: "{{ item.name }}"
+    guest_id: "{{ item.so_guest }}"
+    folder: "/{{ vmware_vcenter_datacenter }}/vm/{{ item.vm_folder }}"
+    state: poweredon
+    disk: "{{ item.disks_list }}"
+    hardware:
+      memory_mb: "{{ item.memory_size }}"
+      num_cpus: "{{ item.vcpus }}"
+    networks: "{{ item.networks }}"
+    template: "{{ item.template_base }}"
+    validate_certs: false
+    wait_for_ip_address: true
+  with_items: "{{ vmware_hosts }}"
+  register: host_created
+  when:
+    - item.state == "present"
+    - not item.so_guest | search("windows")
+
+- name: creating a VM Windows at vSphere vCenter
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username }}"
+    password: "{{ vmware_vcenter_password }}"
+    datacenter: "{{ vmware_vcenter_datacenter }}"
+    cluster: "{{ vmware_vcenter_cluster }}"
+    annotation: "{{ item.note }}"
+    name: "{{ item.name }}"
+    guest_id: "{{ item.so_guest }}"
+    folder: "/{{ vmware_vcenter_datacenter }}/vm/{{ item.vm_folder }}"
+    state: poweredon
+    disk: "{{ item.disks_list }}"
+    hardware:
+      memory_mb: "{{ item.memory_size }}"
+      num_cpus: "{{ item.vcpus }}"
+      hotadd_cpu: "{{ item.hotadd_cpu | default(hotadd_cpu) }}"
+      hotremove_cpu: "{{ item.hotremove_cpu | default(hotremove_cpu) }}"
+      hotadd_memory: "{{ item.hotadd_memory | default(hotadd_memory) }}"
+      mem_reservation: "{{ item.mem_reservation | default(mem_reservation) }}"
+      num_cpu_cores_per_socket: "{{ item.num_cpu_cores_per_socket | default(num_cpu_cores_per_socket) }}"
+    networks: "{{ item.networks }}"
+    template: "{{ item.template_base }}"
+    validate_certs: false
+    wait_for_ip_address: true
+    customization: "{{ item.customization }}"
+  with_items: "{{ vmware_hosts }}"
+  register: host_created
+  when:
+    - item.state == "present"
+    - item.so_guest | search("windows")
+
+- name: Wait for vmware windows customization
+  wait_for:
+    delay: 5
+  with_items: "{{ host_created.results }}"
+  when:
+    - item is changed
+
+- name: add hosts at ansible inventory
+  include_tasks: add_hosts.yml

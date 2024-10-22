@@ -1,0 +1,11 @@
+---
+- name: Prepare
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: installs PyVmoni Requirements
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - PyVmomi

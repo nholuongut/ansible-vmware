@@ -1,0 +1,32 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    ansible_connection_options:
+      connection: local
+lint:
+  name: yamllint
+platforms:
+  - name: instance-local
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../playbook.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: default
+  test_sequence:
+    - lint
+    - syntax
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+verifier:
+  name: testinfra
+  directory: ../../tests
+  lint:
+    name: flake8

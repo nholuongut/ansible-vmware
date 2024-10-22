@@ -1,0 +1,7 @@
+---
+- name: Destroy instance
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - debug: msg="*** It's not necessary, becouse this role runs in local mode"

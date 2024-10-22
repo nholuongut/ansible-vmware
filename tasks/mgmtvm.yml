@@ -1,0 +1,16 @@
+---
+- include_tasks: getting_facts.yml
+
+- name: modifies VM state
+  vmware_guest:
+    hostname: "{{ vmware_vcenter_host }}"
+    username: "{{ vmware_vcenter_username }}"
+    password: "{{ vmware_vcenter_password }}"
+    name: "{{ item.instance.hw_name  }}"
+    uuid: "{{ item.instance.hw_product_uuid  }}"
+    state: "{{ item.item.mgmt_state }}"
+    validate_certs: false
+  with_flattened: "{{ vm_facts.results }}"
+  when:
+    - item.item.mgmt_state is not none
+    - item.item.mgmt_state != ""

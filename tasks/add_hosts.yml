@@ -1,0 +1,7 @@
+---
+- name: add hosts in inventory
+  add_host:
+    hostname: "{{ item.name }}"
+    group: recently_created
+    ansible_host: "{{ item.networks.0.ip }}"
+  with_items: "{{ vmware_hosts }}"
